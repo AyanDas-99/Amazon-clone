@@ -24,19 +24,22 @@ userRoute.post("/api/add-to-cart", auth, async (req, res) => {
 });
 
 userRoute.delete("/api/remove-from-cart/:id", auth, async (req, res) => {
+    console.log('Deleting a very important thing');
     try {
         const { id } = req.params;
         const product = await Product.findById(id);
         let user = await User.findById(req.user);
 
-        let a = user.cart.findIndex((x) => x.product._id.equals(product._id));
-        if (a > 0) {
-            if (user.cart[a].quantity == 1) {
-                user.cart.splice(a, 1);
-            } else {
-                user.cart[a].quantity -= 1;
+        for(let i=0; i < user.cart.length; i++) {
+            if(user.cart[i].product._id.equals(product._id)) {
+                if(user.cart[i].quantity == 1) {
+                    user.cart.splice(i, 1);
+                } else {
+                    user.cart[i].quantity -= 1;
+                }
             }
         }
+        
         user = await user.save();
         res.json(user);
     } catch (e) {
