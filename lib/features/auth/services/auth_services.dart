@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:amazon_clone/common/widgets/bottom_bar.dart';
+import 'package:amazon_clone/features/auth/screens/auth_screen.dart';
 import 'package:amazon_clone/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -121,6 +122,23 @@ class AuthServices {
     } catch (e) {
       if (context.mounted) {
         print(e);
+      }
+    }
+  }
+
+  void logOut(BuildContext context) async {
+    try {
+      print('logging out');
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      await sharedPreferences.setString('x-auth-token', '');
+      if (context.mounted) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, AuthScreen.routeName, (route) => false);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        showSnackBar(context, e.toString());
       }
     }
   }
